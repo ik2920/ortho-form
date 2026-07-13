@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NHS Orthodontic Case Assessment</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --border: #e2e6ec;
+    --border-focus: #005eb8;
+    --accent: #005eb8;
+    --accent-light: #e8f0fb;
+    --text: #1a1f2e;
+    --text-muted: #6b7280;
+    --section-head: #003087;
+    --pill-bg: #eef2fb;
+    --pill-active: #005eb8;
+    --pill-active-text: #fff;
+    --danger: #dc2626;
+    --success: #16a34a;
+    --radius: 8px;
+    --radius-sm: 5px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  header {
+    background: var(--section-head);
+    border-bottom: 1px solid #002060;
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  header h1 { font-size: 16px; font-weight: 600; color: #fff; letter-spacing: -0.2px; }
+  header span { font-size: 12px; color: #a0c4f1; }
+
+  .nhs-badge {
+    background: #fff;
+    color: var(--section-head);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px;
+    align-items: start;
+  }
+
+  .form-col { display: flex; flex-direction: column; gap: 16px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .card-header {
+    background: var(--section-head);
+    color: #fff;
+    padding: 10px 18px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  .card-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row > * { flex: 1; min-width: 140px; }
+
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type="number"] { -moz-appearance: textfield; }
+
+  input[type="text"], input[type="date"], input[type="number"], textarea, select {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text);
+    background: #fff;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(0,94,184,0.1);
+  }
+  textarea { resize: vertical; min-height: 54px; }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    display: inline-block;
+    padding: 5px 13px;
+    border-radius: 20px;
+    background: var(--pill-bg);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  .pill:hover { border-color: var(--accent); color: var(--accent); }
+  .pill.active { background: var(--pill-active); color: var(--pill-active-text); border-color: var(--pill-active); }
+  .pill.danger.active { background: var(--danger); border-color: var(--danger); color:#fff; }
+  .pill.success.active { background: var(--success); border-color: var(--success); color:#fff; }
+
+  .expand-field {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.25s ease, opacity 0.2s ease, margin-top 0.2s ease;
+    margin-top: 0;
+  }
+  .expand-field.open { max-height: 100px; opacity: 1; margin-top: 8px; }
+
+  .inline-num { display: flex; align-items: center; gap: 6px; }
+  .inline-num input { max-width: 80px; }
+  .inline-num .unit { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .arch-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.6px;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 8px; padding-bottom: 4px;
+    border-bottom: 2px solid var(--accent-light);
+  }
+
+  .sec-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%; font-size: 10px; font-weight: 700; margin-right: 6px;
+  }
+
+  /* check items */
+  .check-list { display: flex; flex-direction: column; gap: 6px; }
+  .check-item {
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; font-size: 13px; color: var(--text);
+    padding: 5px 8px; border-radius: var(--radius-sm); transition: background 0.1s;
+  }
+  .check-item:hover { background: var(--accent-light); }
+  .check-item input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--accent); }
+
+  /* Output */
+  .output-col { position: sticky; top: 62px; }
+  .output-card { background: #0f1729; border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.18); }
+  .output-header { background: #1a2540; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+  .output-header span { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #a0aec0; }
+  .copy-btn { background: var(--accent); color: #fff; border: none; padding: 6px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .copy-btn:hover { background: #004494; }
+  .copy-btn.copied { background: var(--success); }
+
+  .export-btn {
+    background: #1a2540;
+    color: #c9d5f0;
+    border: none;
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-left: 6px;
+  }
+  .export-btn:hover { background: #243050; }
+
+
+  #output-text { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.7; color: #c9d5f0; padding: 18px; min-height: 300px; max-height: calc(100vh - 140px); overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
+  .clear-btn { display: block; width: 100%; margin-top: 10px; padding: 9px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-muted); font-size: 12px; cursor: pointer; transition: all 0.15s; }
+  .clear-btn:hover { background: #fee2e2; border-color: #fca5a5; color: var(--danger); }
+
+  .molar-row { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+  .vdivider { width: 1px; background: var(--border); align-self: stretch; margin: 0 4px; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .output-col { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Orthodontic Case Assessment</h1>
+    <span>NHS Form</span>
+  </div>
+  <span class="nhs-badge">NHS</span>
+</header>
+
+<div class="layout">
+  <div class="form-col">
+
+    <!-- 1. Patient Concerns -->
+    <div class="card">
+      <div class="card-header"><span class="sec-num">1</span>Patient Details</div>
+      <div class="card-body">
+        <div class="row">
+          <div><label>Patient Name</label><input type="text" id="patientName" placeholder="Full name" oninput="generate()"></div>
+          <div><label>Date of Referral</label><input type="text" id="referralDate" placeholder="e.g. 01/01/2025" oninput="generate()"></div>
+        </div>
+        <div><label>Patient Concerns</label><textarea id="patientConcerns" rows="3" placeholder="Patient's main concerns..." oninput="generate()"></textarea></div>
+      </div>
+    </div>
+
+    <!-- 2. Medical/Dental History -->
+    <div class="card">
+      <div class="card-header"><span class="sec-num">2</span>Medical & Dental History</div>
+      <div class="card-body">
+        <div>
+          <label>Relevant Medical Conditions</label>
+          <textarea id="medConditions" rows="2" placeholder="Any relevant medical conditions, medications, allergies..." oninput="generate()"></textarea>
+        </div>
+        <div class="row">
+          <div><label>Last Dental Visit</label><input type="text" id="lastVisit" placeholder="e.g. 6 months ago" oninput="generate()"></div>
+          <div><label>Registered Dentist</label><input type="text" id="regDentist" placeholder="Dentist / practice name" oninput="generate()"></div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Smoking / Vaping</label>
+            <div class="pills" id="smoking">
+              <span class="pill success" onclick="togglePillExpand(this,'smoking','smokingDetails','Yes')">No</span>
+              <span class="pill danger" onclick="togglePillExpand(this,'smoking','smokingDetails','Yes')">Yes</span>
+            </div>
+            <div class="expand-field" id="smokingDetails">
+              <input type="text" id="smokingDetailsInput" placeholder="e.g. 10 cigarettes/day, vapes daily..." oninput="generate()">
+            </div>
+          </div>
+          <div>
+            <label>Alcohol</label>
+            <div class="pills" id="alcohol">
+              <span class="pill success" onclick="togglePillExpand(this,'alcohol','alcoholDetails','Yes')">No</span>
+              <span class="pill danger" onclick="togglePillExpand(this,'alcohol','alcoholDetails','Yes')">Yes</span>
+            </div>
+            <div class="expand-field" id="alcoholDetails">
+              <input type="text" id="alcoholDetailsInput" placeholder="e.g. 14 units/week..." oninput="generate()">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Habits</label>
+            <div class="pills" id="habits">
+              <span class="pill success" onclick="togglePillExpand(this,'habits','habitsDetails','Yes')">No</span>
+              <span class="pill danger" onclick="togglePillExpand(this,'habits','habitsDetails','Yes')">Yes</span>
+            </div>
+            <div class="expand-field" id="habitsDetails">
+              <input type="text" id="habitsDetailsInput" placeholder="Details of habits..." oninput="generate()">
+            </div>
+          </div>
+          <div>
+            <label>History of Trauma</label>
+            <div class="pills" id="trauma">
+              <span class="pill success" onclick="togglePillExpand(this,'trauma','traumaDetails','Yes')">No</span>
+              <span class="pill danger" onclick="togglePillExpand(this,'trauma','traumaDetails','Yes')">Yes</span>
+            </div>
+            <div class="expand-field" id="traumaDetails">
+              <input type="text" id="traumaDetailsInput" placeholder="Details of trauma..." oninput="generate()">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Extra-Oral -->
+    <div class="card">
+      <div class="card-header"><span class="sec-num">3</span>Extra-Oral Examination</div>
+      <div class="card-body">
+        <div>
+          <label>Skeletal Classification</label>
+          <div class="molar-row">
+            <div class="pills" id="skelClass">
+              <span class="pill" onclick="togglePill(this,'skelClass')">Class I</span>
+              <span class="pill" onclick="togglePill(this,'skelClass')">Class II</span>
+              <span class="pill" onclick="togglePill(this,'skelClass')">Class III</span>
+            </div>
+            <div class="vdivider"></div>
+            <div class="pills" id="skelSev">
+              <span class="pill" onclick="togglePill(this,'skelSev')">Mild</span>
+              <span class="pill" onclick="togglePill(this,'skelSev')">Moderate</span>
+              <span class="pill danger" onclick="togglePill(this,'skelSev')">Severe</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label>FM Angle</label>
+          <div class="pills" id="fmAngle">
+            <span class="pill" onclick="togglePill(this,'fmAngle')">Low</span>
+            <span class="pill" onclick="togglePill(this,'fmAngle')">Average</span>
+            <span class="pill" onclick="togglePill(this,'fmAngle')">High</span>
+          </div>
+        </div>
+        <div>
+          <label>Facial Profile</label>
+          <div class="pills" id="facialProfile">
+            <span class="pill" onclick="togglePill(this,'facialProfile')">Straight</span>
+            <span class="pill" onclick="togglePill(this,'facialProfile')">Convex</span>
+            <span class="pill" onclick="togglePill(this,'facialProfile')">Concave</span>
+          </div>
+        </div>
+        <div>
+          <label>Nasolabial Angle (NLA)</label>
+          <div class="pills" id="nla">
+            <span class="pill" onclick="togglePill(this,'nla')">Acute</span>
+            <span class="pill" onclick="togglePill(this,'nla')">Normal</span>
+            <span class="pill" onclick="togglePill(this,'nla')">Obtuse</span>
+          </div>
+        </div>
+        <div>
+          <label>Transverse Asymmetry</label>
+          <div class="pills" id="transverse">
+            <span class="pill success" onclick="togglePillExpand(this,'transverse','transverseDetails','Yes')">No</span>
+            <span class="pill danger" onclick="togglePillExpand(this,'transverse','transverseDetails','Yes')">Yes</span>
+          </div>
+          <div class="expand-field" id="transverseDetails">
+            <input type="text" id="transverseDetailsInput" placeholder="Details of asymmetry..." oninput="generate()">
+          </div>
+        </div>
+        <div>
+          <label>Lips</label>
+          <div class="pills" id="lips">
+            <span class="pill success" onclick="togglePill(this,'lips')">Competent</span>
+            <span class="pill danger" onclick="togglePill(this,'lips')">Incompetent</span>
+          </div>
+        </div>
+        <div>
+          <label>TMJ Pathology / Deviations</label>
+          <div class="pills" id="tmj">
+            <span class="pill success" onclick="togglePillExpand(this,'tmj','tmjDetails','Yes')">No</span>
+            <span class="pill danger" onclick="togglePillExpand(this,'tmj','tmjDetails','Yes')">Yes</span>
+          </div>
+          <div class="expand-field" id="tmjDetails">
+            <input type="text" id="tmjDetailsInput" placeholder="Details of TMJ pathology or deviations..." oninput="generate()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Intra-Oral -->
+    <div class="card">
+      <div class="card-header"><span class="sec-num">4</span>Intra-Oral Examination</div>
+      <div class="card-body">
+        <div class="row">
+          <div>
+            <label>Oral Hygiene</label>
+            <div class="pills" id="oralHygiene">
+              <span class="pill success" onclick="togglePill(this,'oralHygiene')">Good</span>
+              <span class="pill" onclick="togglePill(this,'oralHygiene')">Average</span>
+              <span class="pill danger" onclick="togglePill(this,'oralHygiene')">Poor</span>
+            </div>
+          </div>
+          <div>
+            <label>Gingival Condition</label>
+            <div class="pills" id="gingival">
+              <span class="pill success" onclick="togglePill(this,'gingival')">Good</span>
+              <span class="pill" onclick="togglePill(this,'gingival')">Average</span>
+              <span class="pill danger" onclick="togglePill(this,'gingival')">Poor</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Caries Evident</label>
+            <div class="pills" id="caries">
+              <span class="pill success" onclick="togglePillExpand(this,'caries','cariesDetails','Yes')">No</span>
+              <span class="pill danger" onclick="togglePillExpand(this,'caries','cariesDetails','Yes')">Yes</span>
+            </div>
+            <div class="expand-field" id="cariesDetails">
+              <input type="text" id="cariesDetailsInput" placeholder="Details..." oninput="generate()">
+            </div>
+          </div>
+          <div>
+            <label>Erosion / Decalcification</label>
+            <div class="pills" id="erosion">
+              <span class="pill success" onclick="togglePillExpand(this,'erosion','erosionDetails','Yes')">No</span>
+              <span class="pill danger" onclick="togglePillExpand(this,'erosion','erosionDetails','Yes')">Yes</span>
+            </div>
+            <div class="expand-field" id="erosionDetails">
+              <input type="text" id="erosionDetailsInput" placeholder="Details..." oninput="generate()">
+            </div>
+          </div>
+        </div>
+        <div>
+          <label>Teeth of Doubtful Prognosis</label>
+          <div class="pills" id="doubtfulProg">
+            <span class="pill success" onclick="togglePillExpand(this,'doubtfulProg','doubtfulProgDetails','Yes')">None</span>
+            <span class="pill danger" onclick="togglePillExpand(this,'doubtfulProg','doubtfulProgDetails','Yes')">Yes</span>
+          </div>
+          <div class="expand-field" id="doubtfulProgDetails">
+            <input type="text" id="doubtfulProgDetailsInput" placeholder="Which teeth..." oninput="generate()">
+          </div>
+        </div>
+        <hr class="divider">
+        <div>
+          <label>BEWE Score</label>
+          <table style="border-collapse:collapse;margin-top:6px;width:auto">
+            <tr>
+              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
+                <input type="number" id="bewe1" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+              </td>
+              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
+                <input type="number" id="bewe2" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+              </td>
+              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
+                <input type="number" id="bewe3" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+              </td>
+            </tr>
+            <tr>
+              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
+                <input type="number" id="bewe4" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+              </td>
+              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
+                <input type="number" id="bewe5" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+              </td>
+              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
+                <input type="number" id="bewe6" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+              </td>
+            </tr>
+          </table>
+          <div style="margin-top:8px">
+            <label>BEWE Notes</label>
+            <input type="text" id="beweNotes" placeholder="Additional BEWE notes..." oninput="generate()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Occlusion -->
+    <div class="card">
+      <div class="card-header"><span class="sec-num">5</span>Occlusion</div>
+      <div class="card-body">
+        <div>
+          <label>Incisor Relationship</label>
+          <div class="pills" id="incisorRel">
+            <span class="pill" onclick="togglePill(this,'incisorRel')">Class I</span>
+            <span class="pill" onclick="togglePill(this,'incisorRel')">Class II/1</span>
+            <span class="pill" onclick="togglePill(this,'incisorRel')">Class II/2</span>
+            <span class="pill" onclick="togglePill(this,'incisorRel')">Class III</span>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Overjet</label>
+            <div class="inline-num">
+              <input type="number" id="overjet" step="0.5" placeholder="0" oninput="generate()">
+              <span class="unit">mm</span>
+            </div>
+          </div>
+          <div>
+            <label>Overbite</label>
+            <div class="pills" id="overbite">
+              <span class="pill" onclick="togglePill(this,'overbite')">Decreased</span>
+              <span class="pill" onclick="togglePill(this,'overbite')">Average</span>
+              <span class="pill" onclick="togglePill(this,'overbite')">Increased</span>
+            </div>
+          </div>
+          <div>
+            <label>Overbite Type</label>
+            <div class="pills" id="overbiteType">
+              <span class="pill" onclick="togglePillMulti(this,'overbiteType')">Complete</span>
+              <span class="pill" onclick="togglePillMulti(this,'overbiteType')">Incomplete</span>
+              <span class="pill danger" onclick="togglePillMulti(this,'overbiteType')">Traumatic</span>
+              <span class="pill" onclick="toggleOverbiteAOB(this)">Anterior Open Bite</span>
+            </div>
+            <div class="expand-field" id="aobDetails">
+              <div class="inline-num" style="margin-top:2px">
+                <input type="number" id="aobMm" step="0.5" placeholder="0" oninput="generate()">
+                <span class="unit">mm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr class="divider">
+        <!-- Buccal Occlusion -->
+        <div class="two-col">
+          <div>
+            <div class="arch-label">Right Buccal Occlusion</div>
+            <div class="pills" id="rightMolar">
+              <span class="pill" onclick="togglePill(this,'rightMolar')">Class I</span>
+              <span class="pill" onclick="togglePill(this,'rightMolar')">Class II</span>
+              <span class="pill" onclick="togglePill(this,'rightMolar')">Class III</span>
+            </div>
+            <div class="pills" style="margin-top:6px" id="rightMolarDesc">
+              <span class="pill" onclick="togglePill(this,'rightMolarDesc')">¼ unit</span>
+              <span class="pill" onclick="togglePill(this,'rightMolarDesc')">½ unit</span>
+              <span class="pill" onclick="togglePill(this,'rightMolarDesc')">¾ unit</span>
+              <span class="pill" onclick="togglePill(this,'rightMolarDesc')">Full unit</span>
+            </div>
+          </div>
+          <div>
+            <div class="arch-label">Left Buccal Occlusion</div>
+            <div class="pills" id="leftMolar">
+              <span class="pill" onclick="togglePill(this,'leftMolar')">Class I</span>
+              <span class="pill" onclick="togglePill(this,'leftMolar')">Class II</span>
+              <span class="pill" onclick="togglePill(this,'leftMolar')">Class III</span>
+            </div>
+            <div class="pills" style="margin-top:6px" id="leftMolarDesc">
+              <span class="pill" onclick="togglePill(this,'leftMolarDesc')">¼ unit</span>
+              <span class="pill" onclick="togglePill(this,'leftMolarDesc')">½ unit</span>
+              <span class="pill" onclick="togglePill(this,'leftMolarDesc')">¾ unit</span>
+              <span class="pill" onclick="togglePill(this,'leftMolarDesc')">Full unit</span>
+            </div>
+          </div>
+        </div>
+        <hr class="divider">
+        <!-- Crowding & Spacing -->
+        <div class="two-col">
+          <div>
+            <div class="arch-label">Lower Arch</div>
+            <label>Crowding</label>
+            <div class="pills" id="lowerCrowding">
+              <span class="pill success" onclick="togglePill(this,'lowerCrowding')">None</span>
+              <span class="pill" onclick="togglePill(this,'lowerCrowding')">Mild</span>
+              <span class="pill" onclick="togglePill(this,'lowerCrowding')">Moderate</span>
+              <span class="pill danger" onclick="togglePill(this,'lowerCrowding')">Severe</span>
+            </div>
+            <label style="margin-top:8px">Spacing</label>
+            <div class="pills" id="lowerSpacing">
+              <span class="pill success" onclick="togglePill(this,'lowerSpacing')">None</span>
+              <span class="pill" onclick="togglePill(this,'lowerSpacing')">Mild</span>
+              <span class="pill" onclick="togglePill(this,'lowerSpacing')">Moderate</span>
+              <span class="pill danger" onclick="togglePill(this,'lowerSpacing')">Severe</span>
+            </div>
+          </div>
+          <div>
+            <div class="arch-label">Upper Arch</div>
+            <label>Crowding</label>
+            <div class="pills" id="upperCrowding">
+              <span class="pill success" onclick="togglePill(this,'upperCrowding')">None</span>
+              <span class="pill" onclick="togglePill(this,'upperCrowding')">Mild</span>
+              <span class="pill" onclick="togglePill(this,'upperCrowding')">Moderate</span>
+              <span class="pill danger" onclick="togglePill(this,'upperCrowding')">Severe</span>
+            </div>
+            <label style="margin-top:8px">Spacing</label>
+            <div class="pills" id="upperSpacing">
+              <span class="pill success" onclick="togglePill(this,'upperSpacing')">None</span>
+              <span class="pill" onclick="togglePill(this,'upperSpacing')">Mild</span>
+              <span class="pill" onclick="togglePill(this,'upperSpacing')">Moderate</span>
+              <span class="pill danger" onclick="togglePill(this,'upperSpacing')">Severe</span>
+            </div>
+          </div>
+        </div>
+        <hr class="divider">
+        <div>
+          <label>Contact Point Displacement</label>
+          <div class="inline-num">
+            <input type="number" id="cpDisplace" step="0.5" placeholder="0" oninput="generate()">
+            <span class="unit">mm</span>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Centre Lines</label>
+            <div class="row">
+              <div>
+                <label>Upper</label>
+                <div class="pills" id="clUpper">
+                  <span class="pill success" onclick="togglePill(this,'clUpper')">Coincident</span>
+                  <span class="pill" onclick="togglePill(this,'clUpper')">Shifted R</span>
+                  <span class="pill" onclick="togglePill(this,'clUpper')">Shifted L</span>
+                </div>
+                <div class="inline-num" style="margin-top:6px">
+                  <input type="number" id="clUpperAmt" step="0.5" placeholder="0" oninput="generate()">
+                  <span class="unit">mm</span>
+                </div>
+              </div>
+              <div>
+                <label>Lower</label>
+                <div class="pills" id="clLower">
+                  <span class="pill success" onclick="togglePill(this,'clLower')">Coincident</span>
+                  <span class="pill" onclick="togglePill(this,'clLower')">Shifted R</span>
+                  <span class="pill" onclick="togglePill(this,'clLower')">Shifted L</span>
+                </div>
+                <div class="inline-num" style="margin-top:6px">
+                  <input type="number" id="clLowerAmt" step="0.5" placeholder="0" oninput="generate()">
+                  <span class="unit">mm</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Crossbites</label>
+            <div class="pills" id="crossbites">
+              <span class="pill success" onclick="togglePillExpand(this,'crossbites','crossbitesDetails','Present')">None</span>
+              <span class="pill danger" onclick="togglePillExpand(this,'crossbites','crossbitesDetails','Present')">Present</span>
+            </div>
+            <div class="expand-field" id="crossbitesDetails">
+              <input type="text" id="crossbitesDetailsInput" placeholder="Anterior / Posterior / Upper / Lower..." oninput="generate()">
+            </div>
+          </div>
+          <div>
+            <label>Scissorbites</label>
+            <div class="pills" id="scissorbites">
+              <span class="pill success" onclick="togglePillExpand(this,'scissorbites','scissorbitesDetails','Present')">None</span>
+              <span class="pill danger" onclick="togglePillExpand(this,'scissorbites','scissorbitesDetails','Present')">Present</span>
+            </div>
+            <div class="expand-field" id="scissorbitesDetails">
+              <input type="text" id="scissorbitesDetailsInput" placeholder="Details..." oninput="generate()">
+            </div>
+          </div>
+        </div>
+        <div>
+          <label>Associated Mandibular Displacement</label>
+          <div class="pills" style="gap:6px" id="mandDisplace">
+            <span class="pill success" onclick="mandDispSelect(this,'none')">None</span>
+            <span class="pill danger" onclick="mandDispSelect(this,'anterior')">Anterior</span>
+            <span class="pill danger" onclick="mandDispSelect(this,'posterior')">Posterior</span>
+            <span class="pill danger" onclick="mandDispSelect(this,'right')">Right</span>
+            <span class="pill danger" onclick="mandDispSelect(this,'left')">Left</span>
+          </div>
+          <div class="expand-field" id="mandDisplaceDetails" style="margin-top:8px">
+            <input type="text" id="mandDisplaceDetailsInput" placeholder="Details of displacement..." oninput="generate()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Aims of Treatment -->
+    <div class="card">
+      <div class="card-header"><span class="sec-num">6</span>Aims of Treatment</div>
+      <div class="card-body">
+        <div class="pills" id="aims" style="gap:8px">
+          <span class="pill" onclick="togglePillMulti(this,'aims')">Relief of crowding</span>
+          <span class="pill" onclick="togglePillMulti(this,'aims')">Maxillary arch-expansion</span>
+          <span class="pill" onclick="togglePillMulti(this,'aims')">Alignment</span>
+          <span class="pill" onclick="togglePillMulti(this,'aims')">Levelling</span>
+          <span class="pill" onclick="togglePillMulti(this,'aims')">Arch-coordination</span>
+          <span class="pill" onclick="togglePillMulti(this,'aims')">Correction of incisor relationship</span>
+          <span class="pill" onclick="togglePillMulti(this,'aims')">Correction of buccal segment – anteroposteriorly</span>
+          <span class="pill" onclick="togglePillMulti(this,'aims')">Correction of buccal segment – laterally</span>
+          <span class="pill" onclick="togglePillMulti(this,'aims')">Space closure</span>
+        </div>
+        <div>
+          <label>Extractions</label>
+          <input type="text" id="extractions" placeholder="e.g. UL4, UR4, LL4, LR4..." oninput="generate()">
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Appliances & Retention -->
+    <div class="card">
+      <div class="card-header"><span class="sec-num">7</span>Appliances & Retention</div>
+      <div class="card-body">
+        <label>Appliances</label>
+        <div class="two-col">
+          <div>
+            <div class="arch-label">Upper</div>
+            <div class="pills" id="applianceUpper">
+              <span class="pill" onclick="togglePillMulti(this,'applianceUpper')">Metal Fixed</span>
+              <span class="pill" onclick="togglePillMulti(this,'applianceUpper')">Removable</span>
+              <span class="pill" onclick="togglePillMulti(this,'applianceUpper')">Functional</span>
+              <span class="pill" onclick="togglePillMulti(this,'applianceUpper')">Other</span>
+            </div>
+          </div>
+          <div>
+            <div class="arch-label">Lower</div>
+            <div class="pills" id="applianceLower">
+              <span class="pill" onclick="togglePillMulti(this,'applianceLower')">Metal Fixed</span>
+              <span class="pill" onclick="togglePillMulti(this,'applianceLower')">Removable</span>
+              <span class="pill" onclick="togglePillMulti(this,'applianceLower')">Functional</span>
+              <span class="pill" onclick="togglePillMulti(this,'applianceLower')">Other</span>
+            </div>
+          </div>
+        </div>
+        <hr class="divider">
+        <label>Retention</label>
+        <div class="two-col">
+          <div>
+            <div class="arch-label">Upper</div>
+            <div class="pills" id="retentionUpper">
+              <span class="pill" onclick="togglePillMulti(this,'retentionUpper')">Fixed</span>
+              <span class="pill" onclick="togglePillMulti(this,'retentionUpper')">Removable</span>
+            </div>
+          </div>
+          <div>
+            <div class="arch-label">Lower</div>
+            <div class="pills" id="retentionLower">
+              <span class="pill" onclick="togglePillMulti(this,'retentionLower')">Fixed</span>
+              <span class="pill" onclick="togglePillMulti(this,'retentionLower')">Removable</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label>Other Notes</label>
+          <textarea id="otherNotes" rows="3" placeholder="Any additional notes..." oninput="generate()"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. IOTN -->
+    <div class="card">
+      <div class="card-header"><span class="sec-num">8</span>Pre-Treatment IOTN Score</div>
+      <div class="card-body">
+        <div class="row">
+          <div>
+            <label>DHC Grade (1–5)</label>
+            <div class="pills" id="dhcGrade">
+              <span class="pill" onclick="togglePill(this,'dhcGrade')">1</span>
+              <span class="pill" onclick="togglePill(this,'dhcGrade')">2</span>
+              <span class="pill" onclick="togglePill(this,'dhcGrade')">3</span>
+              <span class="pill danger" onclick="togglePill(this,'dhcGrade')">4</span>
+              <span class="pill danger" onclick="togglePill(this,'dhcGrade')">5</span>
+            </div>
+          </div>
+          <div>
+            <label>DHC Qualifier</label>
+            <input type="text" id="dhcQualifier" placeholder="e.g. a, d, h..." oninput="generate()">
+          </div>
+          <div>
+            <label>AC Grade (1–10)</label>
+            <div class="pills" id="acGrade">
+              <span class="pill" onclick="togglePill(this,'acGrade')">1</span>
+              <span class="pill" onclick="togglePill(this,'acGrade')">2</span>
+              <span class="pill" onclick="togglePill(this,'acGrade')">3</span>
+              <span class="pill" onclick="togglePill(this,'acGrade')">4</span>
+              <span class="pill" onclick="togglePill(this,'acGrade')">5</span>
+              <span class="pill" onclick="togglePill(this,'acGrade')">6</span>
+              <span class="pill" onclick="togglePill(this,'acGrade')">7</span>
+              <span class="pill" onclick="togglePill(this,'acGrade')">8</span>
+              <span class="pill" onclick="togglePill(this,'acGrade')">9</span>
+              <span class="pill" onclick="togglePill(this,'acGrade')">10</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /form-col -->
+
+  <!-- OUTPUT -->
+  <div class="output-col">
+    <div class="output-card">
+      <div class="output-header">
+        <span>📋 Generated Notes</span>
+        <div>
+          <button class="copy-btn" onclick="copyOutput()" id="copyBtn">Copy</button>
+          <button class="export-btn" onclick="exportPDF()">Export PDF</button>
+        </div>
+      </div>
+      <pre id="output-text">Fill in the form to generate clinical notes...</pre>
+    </div>
+    <button class="clear-btn" onclick="clearAll()">🗑 Clear all fields</button>
+  </div>
+
+</div>
+
+<script>
+// ---- Pill helpers ----
+function toggleOverbiteAOB(el) {
+  el.classList.toggle('active');
+  const expandEl = document.getElementById('aobDetails');
+  if (el.classList.contains('active')) {
+    expandEl.classList.add('open');
+  } else {
+    expandEl.classList.remove('open');
+    document.getElementById('aobMm').value = '';
+  }
+  generate();
+}
+function togglePill(el, groupId) {
+  const group = document.getElementById(groupId);
+  const wasActive = el.classList.contains('active');
+  group.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  if (!wasActive) el.classList.add('active');
+  generate();
+}
+function togglePillMulti(el, groupId) {
+  el.classList.toggle('active');
+  generate();
+}
+function togglePillExpand(el, groupId, expandId, triggerValue) {
+  const group = document.getElementById(groupId);
+  const wasActive = el.classList.contains('active');
+  group.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  const expandEl = document.getElementById(expandId);
+  const clearInput = () => { const input = expandEl.querySelector('input'); if (input) input.value = ''; };
+  const trigger = triggerValue || 'Yes';
+  if (!wasActive) {
+    el.classList.add('active');
+    if (el.textContent.trim() === trigger) { expandEl.classList.add('open'); }
+    else { expandEl.classList.remove('open'); clearInput(); }
+  } else {
+    expandEl.classList.remove('open'); clearInput();
+  }
+  generate();
+}
+function mandDispSelect(el, value) {
+  const group = document.getElementById('mandDisplace');
+  const wasActive = el.classList.contains('active');
+  if (value === 'none') {
+    group.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    if (!wasActive) el.classList.add('active');
+  } else {
+    group.querySelector('.pill.success').classList.remove('active');
+    el.classList.toggle('active');
+  }
+  const anyPathology = [...group.querySelectorAll('.pill.danger')].some(p => p.classList.contains('active'));
+  const expandEl = document.getElementById('mandDisplaceDetails');
+  if (anyPathology) { expandEl.classList.add('open'); }
+  else { expandEl.classList.remove('open'); document.getElementById('mandDisplaceDetailsInput').value = ''; }
+  generate();
+}
+function getPill(groupId) {
+  const group = document.getElementById(groupId);
+  if (!group) return '';
+  const active = group.querySelector('.pill.active');
+  return active ? active.textContent.trim() : '';
+}
+function getPillsMulti(groupId) {
+  const group = document.getElementById(groupId);
+  if (!group) return '';
+  return [...group.querySelectorAll('.pill.active')].map(p => p.textContent.trim()).join(', ');
+}
+function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function line(label, value) { if (!value) return ''; return `${label}: ${value}\n`; }
+function section(title) { const bar = '─'.repeat(50); return `\n${bar}\n  ${title}\n${bar}\n`; }
+
+function generate() {
+  let out = '';
+  out += `NHS ORTHODONTIC CASE ASSESSMENT\n`;
+
+  // Patient Details
+  const name = val('patientName'), referralDate = val('referralDate'), concerns = val('patientConcerns');
+  if (name||referralDate||concerns) {
+    out += section('PATIENT DETAILS');
+    out += line('Patient', name);
+    out += line('Date of referral', referralDate);
+    if (concerns) out += `Patient concerns: ${concerns}\n`;
+  }
+
+  // Medical & Dental History
+  const medConditions = val('medConditions'), lastVisit = val('lastVisit'), regDentist = val('regDentist');
+  const smoking = getPill('smoking'), smokingD = val('smokingDetailsInput');
+  const alcohol = getPill('alcohol'), alcoholD = val('alcoholDetailsInput');
+  const habits = getPill('habits'), habitsD = val('habitsDetailsInput');
+  const trauma = getPill('trauma'), traumaD = val('traumaDetailsInput');
+  const teethPresent = val('teethPresent');
+  const doubtful = getPill('doubtfulProg'), doubtfulD = val('doubtfulProgDetailsInput');
+  if (medConditions||lastVisit||regDentist||smoking||alcohol||habits||trauma) {
+    out += section('MEDICAL & DENTAL HISTORY');
+    if (medConditions) out += `Medical conditions: ${medConditions}\n`;
+    out += line('Last dental visit', lastVisit);
+    out += line('Registered dentist', regDentist);
+    if (smoking) out += `Smoking/Vaping: ${smoking}${smoking==='Yes'&&smokingD?' – '+smokingD:''}\n`;
+    if (alcohol) out += `Alcohol: ${alcohol}${alcohol==='Yes'&&alcoholD?' – '+alcoholD:''}\n`;
+    if (habits) out += `Habits: ${habits}${habits==='Yes'&&habitsD?' – '+habitsD:''}\n`;
+    if (trauma) out += `History of trauma: ${trauma}${trauma==='Yes'&&traumaD?' – '+traumaD:''}\n`;
+  }
+
+  // Extra-Oral
+  const skelClass = getPill('skelClass'), skelSev = getPill('skelSev');
+  const fmAngle = getPill('fmAngle'), facProfile = getPill('facialProfile'), nla = getPill('nla');
+  const transverse = getPill('transverse'), transverseD = val('transverseDetailsInput');
+  const lips = getPill('lips');
+  const tmj = getPill('tmj'), tmjD = val('tmjDetailsInput');
+  if (skelClass||skelSev||fmAngle||facProfile||nla||transverse||lips||tmj) {
+    out += section('EXTRA-ORAL EXAMINATION');
+    if (skelClass||skelSev) out += `Skeletal classification: ${skelClass||''}${skelSev?' – '+skelSev:''}\n`;
+    out += line('FM angle / Face height', fmAngle);
+    out += line('Facial profile', facProfile);
+    out += line('NLA', nla);
+    if (transverse) out += `Transverse asymmetry: ${transverse}${transverse==='Yes'&&transverseD?' – '+transverseD:''}\n`;
+    out += line('Lips', lips);
+    if (tmj === 'No') out += `TMJ: NAD\n`;
+    if (tmj === 'Yes') out += `TMJ – pathology/deviation present${tmjD?' – '+tmjD:''}\n`;
+  }
+
+  // Intra-Oral
+  const oh = getPill('oralHygiene'), ging = getPill('gingival');
+  const caries = getPill('caries'), cariesD = val('cariesDetailsInput');
+  const erosion = getPill('erosion'), erosionD = val('erosionDetailsInput');
+  const bewe = [val('bewe1'),val('bewe2'),val('bewe3'),val('bewe4'),val('bewe5'),val('bewe6')];
+  const beweTotal = bewe.filter(v=>v!=='').reduce((a,b)=>a+Number(b),0);
+  const beweAny = bewe.some(v=>v!=='');
+  const beweNotes = val('beweNotes');
+  if (oh||ging||caries||erosion||doubtful||beweAny||beweNotes) {
+    out += section('INTRA-ORAL EXAMINATION');
+    out += line('Oral hygiene', oh);
+    out += line('Gingival condition', ging);
+    if (caries) out += `Caries: ${caries}${caries==='Yes'&&cariesD?' – '+cariesD:''}\n`;
+    if (erosion) out += `Erosion/decalcification: ${erosion}${erosion==='Yes'&&erosionD?' – '+erosionD:''}\n`;
+    if (doubtful) out += `Teeth of doubtful prognosis: ${doubtful}${doubtful==='Yes'&&doubtfulD?' – '+doubtfulD:''}\n`;
+    if (beweAny) {
+      const v = bewe.map(s => s||'0');
+      out += `BEWE:\n${v[0]}  ${v[1]}  ${v[2]}\n${v[3]}  ${v[4]}  ${v[5]}\n`;
+    }
+    if (beweNotes) out += `BEWE notes: ${beweNotes}\n`;
+  }
+
+  // Occlusion
+  const incRel = getPill('incisorRel'), oj = val('overjet');
+  const ob = getPill('overbite'), obType = getPillsMulti('overbiteType'), aobMm = val('aobMm');
+  const rMolar = getPill('rightMolar'), rMolarDesc = getPill('rightMolarDesc');
+  const lMolar = getPill('leftMolar'), lMolarDesc = getPill('leftMolarDesc');
+  const uCrowd = getPill('upperCrowding'), lCrowd = getPill('lowerCrowding');
+  const uSpace = getPill('upperSpacing'), lSpace = getPill('lowerSpacing');
+  const cpD = val('cpDisplace');
+  const clUpper = getPill('clUpper'), clUpperAmt = val('clUpperAmt');
+  const clLower = getPill('clLower'), clLowerAmt = val('clLowerAmt');
+  const cross = getPill('crossbites'), crossD = val('crossbitesDetailsInput');
+  const scissor = getPill('scissorbites'), scissorD = val('scissorbitesDetailsInput');
+  const mandDispGroup = document.getElementById('mandDisplace');
+  const mandDispPills = [...mandDispGroup.querySelectorAll('.pill.active')].map(p => p.textContent.trim());
+  const mandDisp = mandDispPills.join(', ');
+  const mandDispDetail = val('mandDisplaceDetailsInput');
+
+  if (incRel||oj||ob||obType||rMolar||lMolar||uCrowd||lCrowd||cross||scissor||clUpper||clLower||mandDisp) {
+    out += section('OCCLUSION');
+    out += line('Incisor relationship', incRel);
+    if (oj) out += `Overjet: ${oj}mm\n`;
+    if (ob||obType||aobMm) out += `Overbite: ${ob||''}${obType?' – '+obType.replace('Anterior Open Bite','AOB'):''}${aobMm?' ('+aobMm+'mm)':''}\n`;
+    if (rMolar||rMolarDesc) out += `Right buccal occlusion: ${rMolar||''}${rMolarDesc?' – '+rMolarDesc:''}\n`;
+    if (lMolar||lMolarDesc) out += `Left buccal occlusion: ${lMolar||''}${lMolarDesc?' – '+lMolarDesc:''}\n`;
+    if (lCrowd) out += `Lower crowding: ${lCrowd}\n`;
+    if (uCrowd) out += `Upper crowding: ${uCrowd}\n`;
+    if (lSpace) out += `Lower spacing: ${lSpace}\n`;
+    if (uSpace) out += `Upper spacing: ${uSpace}\n`;
+    if (cpD) out += `Contact point displacement: ${cpD}mm\n`;
+    if (clUpper||clLower) out += `Centrelines: Upper – ${clUpper||'?'}${clUpperAmt?' ('+clUpperAmt+'mm)':''} | Lower – ${clLower||'?'}${clLowerAmt?' ('+clLowerAmt+'mm)':''}\n`;
+    if (cross) out += `Crossbites: ${cross}${cross==='Present'&&crossD?' – '+crossD:''}\n`;
+    if (scissor) out += `Scissorbites: ${scissor}${scissor==='Present'&&scissorD?' – '+scissorD:''}\n`;
+    if (mandDisp && mandDisp !== 'None') out += `Mandibular displacement: ${mandDisp}${mandDispDetail?' – '+mandDispDetail:''}\n`;
+  }
+
+  // Aims
+  const aims = getPillsMulti('aims'), extractions = val('extractions');
+  if (aims||extractions) {
+    out += section('AIMS OF TREATMENT');
+    if (aims) out += `${aims}\n`;
+    out += line('Extractions', extractions);
+  }
+
+  // Appliances & Retention
+  const appU = getPillsMulti('applianceUpper'), appL = getPillsMulti('applianceLower');
+  const retU = getPillsMulti('retentionUpper'), retL = getPillsMulti('retentionLower');
+  const notes = val('otherNotes');
+  if (appU||appL||retU||retL||notes) {
+    out += section('APPLIANCES & RETENTION');
+    if (appU) out += `Appliances – Upper: ${appU}\n`;
+    if (appL) out += `Appliances – Lower: ${appL}\n`;
+    if (retU) out += `Retention – Upper: ${retU}\n`;
+    if (retL) out += `Retention – Lower: ${retL}\n`;
+    if (notes) out += `\nOther notes:\n${notes}\n`;
+  }
+
+  // IOTN
+  const dhcGrade = getPill('dhcGrade'), dhcQ = val('dhcQualifier'), acGrade = getPill('acGrade');
+  if (dhcGrade||dhcQ||acGrade) {
+    out += section('PRE-TREATMENT IOTN');
+    if (dhcGrade) out += `DHC grade: ${dhcGrade}${dhcQ?' ('+dhcQ+')':''}\n`;
+    out += line('AC grade', acGrade);
+  }
+
+  if (!out.trim() || out.trim() === 'NHS ORTHODONTIC CASE ASSESSMENT') {
+    out = 'Fill in the form to generate clinical notes...';
+  }
+  document.getElementById('output-text').textContent = out;
+}
+
+function exportPDF() {
+  const raw = document.getElementById('output-text').textContent;
+  if (!raw || raw === 'Fill in the form to generate clinical notes...') {
+    alert('Please fill in the form first.');
+    return;
+  }
+
+  // Parse the raw text into sections
+  const lines = raw.split('\n');
+  let html = '';
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith('─') || line.trim() === '') continue;
+    // Section headers are lines surrounded by ─ lines
+    if (i > 0 && lines[i-1] && lines[i-1].startsWith('─') && lines[i+1] && lines[i+1].startsWith('─')) {
+      html += `<h2>${line.trim()}</h2>`;
+    } else if (line.startsWith('NHS ORTHODONTIC')) {
+      html += `<h1>${line.trim()}</h1>`;
+    } else if (line.includes(': ')) {
+      const colon = line.indexOf(': ');
+      const key = line.substring(0, colon);
+      const val = line.substring(colon + 2);
+      html += `<div class="row"><span class="key">${key}</span><span class="val">${val}</span></div>`;
+    } else if (line.trim()) {
+      html += `<div class="plain">${line}</div>`;
+    }
+  }
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>NHS Orthodontic Assessment</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; font-size: 11px; color: #111; padding: 20mm 18mm; line-height: 1.6; }
+  h1 { font-size: 16px; font-weight: 700; color: #003087; border-bottom: 3px solid #003087; padding-bottom: 6px; margin-bottom: 16px; letter-spacing: 0.5px; }
+  h2 { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #fff; background: #003087; padding: 5px 10px; margin: 16px 0 8px; border-radius: 3px; }
+  .row { display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px solid #f0f0f0; }
+  .key { font-weight: 600; color: #444; min-width: 200px; flex-shrink: 0; }
+  .val { color: #111; }
+  .plain { padding: 3px 0; color: #111; }
+  @media print {
+    @page { margin: 15mm; }
+    body { padding: 0; }
+    h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+${html}
+<script>window.onload = function() { window.print(); }<\/script>
+</body>
+</html>`);
+  win.document.close();
+}
+
+function copyOutput() {
+  navigator.clipboard.writeText(document.getElementById('output-text').textContent).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied ✓'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function clearAll() {
+  if (!confirm('Clear all fields?')) return;
+  document.querySelectorAll('input[type="text"], input[type="date"], input[type="number"], textarea').forEach(el => el.value = '');
+  document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+  document.querySelectorAll('.pill.active').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.expand-field').forEach(el => el.classList.remove('open'));
+  generate();
+}
+
+// Set today's date
+document.getElementById('assessDate').value = new Date().toISOString().split('T')[0];
+generate();
+</script>
+</body>
+</html>
