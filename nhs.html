@@ -189,32 +189,36 @@
   .check-item input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--accent); }
 
   /* Output */
-  .output-col { position: sticky; top: 62px; }
+  .output-col { position: sticky; top: 86px; }
   .output-card { background: #0f1729; border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.18); }
-  .output-header { background: #1a2540; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
-  .output-header span { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #a0aec0; }
-  .copy-btn { background: var(--accent); color: #fff; border: none; padding: 6px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
-  .copy-btn:hover { background: #004494; }
-  .copy-btn.copied { background: var(--success); }
-
+  .output-header { background: #1a2540; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap; }
+  .output-header span { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #a0aec0; white-space: nowrap; }
+  .output-header > div { display: flex; gap: 6px; flex-shrink: 0; }
   .export-btn {
     background: #1a2540;
     color: #c9d5f0;
-    border: none;
-    padding: 6px 14px;
+    border: 1px solid #2a3a5c;
+    padding: 5px 10px;
     border-radius: var(--radius-sm);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.15s;
-    margin-left: 6px;
+    white-space: nowrap;
   }
   .export-btn:hover { background: #243050; }
+  .copy-btn { background: var(--accent); color: #fff; border: none; padding: 5px 10px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+  .copy-btn:hover { background: #004494; }
+  .copy-btn.copied { background: var(--success); }
 
 
-  #output-text { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.7; color: #c9d5f0; padding: 18px; min-height: 300px; max-height: calc(100vh - 140px); overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
-  .clear-btn { display: block; width: 100%; margin-top: 10px; padding: 9px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-muted); font-size: 12px; cursor: pointer; transition: all 0.15s; }
-  .clear-btn:hover { background: #fee2e2; border-color: #fca5a5; color: var(--danger); }
+  #output-text { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.7; color: #c9d5f0; padding: 18px; white-space: pre-wrap; word-break: break-word; max-height: calc(1.7em * 10 + 36px); overflow: hidden; transition: max-height 0.3s ease; }
+  #output-text.expanded { max-height: none; }
+  .output-toggle { width: 100%; background: #1a2540; border: none; border-top: 1px solid #2a3a5c; color: #a0aec0; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; padding: 8px; cursor: pointer; text-align: center; transition: background 0.15s; }
+  .output-toggle:hover { background: #243050; }
+  .save-btn { display: block; width: 100%; margin-top: 10px; padding: 9px; background: var(--accent-light); border: 1px solid var(--accent); border-radius: var(--radius-sm); color: var(--accent); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .save-btn:hover { background: var(--accent); color: #fff; }
+  .save-btn.saved { background: var(--success); border-color: var(--success); color: #fff; }
 
   .molar-row { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
   .vdivider { width: 1px; background: var(--border); align-self: stretch; margin: 0 4px; }
@@ -243,10 +247,10 @@
       <div class="card-header"><span class="sec-num">1</span>Patient Details</div>
       <div class="card-body">
         <div class="row">
-          <div><label>Patient Name</label><input type="text" id="patientName" placeholder="Full name" oninput="generate()"></div>
-          <div><label>Date of Referral</label><input type="text" id="referralDate" placeholder="e.g. 01/01/2025" oninput="generate()"></div>
+          <div><label>Patient Name</label><input type="text" id="patientName" placeholder="" oninput="generate()"></div>
+          <div><label>Date of Referral</label><input type="text" id="referralDate" placeholder="" oninput="generate()"></div>
         </div>
-        <div><label>Patient Concerns</label><textarea id="patientConcerns" rows="3" placeholder="Patient's main concerns..." oninput="generate()"></textarea></div>
+        <div><label>Patient Concerns</label><textarea id="patientConcerns" rows="3" placeholder="" oninput="generate()"></textarea></div>
       </div>
     </div>
 
@@ -256,11 +260,11 @@
       <div class="card-body">
         <div>
           <label>Relevant Medical Conditions</label>
-          <textarea id="medConditions" rows="2" placeholder="Any relevant medical conditions, medications, allergies..." oninput="generate()"></textarea>
+          <textarea id="medConditions" rows="2" placeholder="" oninput="generate()"></textarea>
         </div>
         <div class="row">
-          <div><label>Last Dental Visit</label><input type="text" id="lastVisit" placeholder="e.g. 6 months ago" oninput="generate()"></div>
-          <div><label>Registered Dentist</label><input type="text" id="regDentist" placeholder="Dentist / practice name" oninput="generate()"></div>
+          <div><label>Last Dental Visit</label><input type="text" id="lastVisit" placeholder="" oninput="generate()"></div>
+          <div><label>Registered Dentist</label><input type="text" id="regDentist" placeholder="" oninput="generate()"></div>
         </div>
         <div class="row">
           <div>
@@ -270,7 +274,7 @@
               <span class="pill danger" onclick="togglePillExpand(this,'smoking','smokingDetails','Yes')">Yes</span>
             </div>
             <div class="expand-field" id="smokingDetails">
-              <input type="text" id="smokingDetailsInput" placeholder="e.g. 10 cigarettes/day, vapes daily..." oninput="generate()">
+              <input type="text" id="smokingDetailsInput" placeholder="" oninput="generate()">
             </div>
           </div>
           <div>
@@ -280,7 +284,7 @@
               <span class="pill danger" onclick="togglePillExpand(this,'alcohol','alcoholDetails','Yes')">Yes</span>
             </div>
             <div class="expand-field" id="alcoholDetails">
-              <input type="text" id="alcoholDetailsInput" placeholder="e.g. 14 units/week..." oninput="generate()">
+              <input type="text" id="alcoholDetailsInput" placeholder="" oninput="generate()">
             </div>
           </div>
         </div>
@@ -292,7 +296,7 @@
               <span class="pill danger" onclick="togglePillExpand(this,'habits','habitsDetails','Yes')">Yes</span>
             </div>
             <div class="expand-field" id="habitsDetails">
-              <input type="text" id="habitsDetailsInput" placeholder="Details of habits..." oninput="generate()">
+              <input type="text" id="habitsDetailsInput" placeholder="" oninput="generate()">
             </div>
           </div>
           <div>
@@ -302,7 +306,7 @@
               <span class="pill danger" onclick="togglePillExpand(this,'trauma','traumaDetails','Yes')">Yes</span>
             </div>
             <div class="expand-field" id="traumaDetails">
-              <input type="text" id="traumaDetailsInput" placeholder="Details of trauma..." oninput="generate()">
+              <input type="text" id="traumaDetailsInput" placeholder="" oninput="generate()">
             </div>
           </div>
         </div>
@@ -346,7 +350,7 @@
           </div>
         </div>
         <div>
-          <label>Nasolabial Angle (NLA)</label>
+          <label>Nasiolabial Angle (NLA)</label>
           <div class="pills" id="nla">
             <span class="pill" onclick="togglePill(this,'nla')">Acute</span>
             <span class="pill" onclick="togglePill(this,'nla')">Normal</span>
@@ -360,7 +364,7 @@
             <span class="pill danger" onclick="togglePillExpand(this,'transverse','transverseDetails','Yes')">Yes</span>
           </div>
           <div class="expand-field" id="transverseDetails">
-            <input type="text" id="transverseDetailsInput" placeholder="Details of asymmetry..." oninput="generate()">
+            <input type="text" id="transverseDetailsInput" placeholder="" oninput="generate()">
           </div>
         </div>
         <div>
@@ -377,7 +381,7 @@
             <span class="pill danger" onclick="togglePillExpand(this,'tmj','tmjDetails','Yes')">Yes</span>
           </div>
           <div class="expand-field" id="tmjDetails">
-            <input type="text" id="tmjDetailsInput" placeholder="Details of TMJ pathology or deviations..." oninput="generate()">
+            <input type="text" id="tmjDetailsInput" placeholder="" oninput="generate()">
           </div>
         </div>
       </div>
@@ -387,44 +391,40 @@
     <div class="card">
       <div class="card-header"><span class="sec-num">4</span>Intra-Oral Examination</div>
       <div class="card-body">
-        <div class="row">
-          <div>
-            <label>Oral Hygiene</label>
-            <div class="pills" id="oralHygiene">
-              <span class="pill success" onclick="togglePill(this,'oralHygiene')">Good</span>
-              <span class="pill" onclick="togglePill(this,'oralHygiene')">Average</span>
-              <span class="pill danger" onclick="togglePill(this,'oralHygiene')">Poor</span>
-            </div>
-          </div>
-          <div>
-            <label>Gingival Condition</label>
-            <div class="pills" id="gingival">
-              <span class="pill success" onclick="togglePill(this,'gingival')">Good</span>
-              <span class="pill" onclick="togglePill(this,'gingival')">Average</span>
-              <span class="pill danger" onclick="togglePill(this,'gingival')">Poor</span>
-            </div>
+        <div>
+          <label>Oral Hygiene</label>
+          <div class="pills" id="oralHygiene">
+            <span class="pill success" onclick="togglePill(this,'oralHygiene')">Good</span>
+            <span class="pill" onclick="togglePill(this,'oralHygiene')">Average</span>
+            <span class="pill danger" onclick="togglePill(this,'oralHygiene')">Poor</span>
           </div>
         </div>
-        <div class="row">
-          <div>
-            <label>Caries Evident</label>
-            <div class="pills" id="caries">
-              <span class="pill success" onclick="togglePillExpand(this,'caries','cariesDetails','Yes')">No</span>
-              <span class="pill danger" onclick="togglePillExpand(this,'caries','cariesDetails','Yes')">Yes</span>
-            </div>
-            <div class="expand-field" id="cariesDetails">
-              <input type="text" id="cariesDetailsInput" placeholder="Details..." oninput="generate()">
-            </div>
+        <div>
+          <label>Gingival Condition</label>
+          <div class="pills" id="gingival">
+            <span class="pill success" onclick="togglePill(this,'gingival')">Good</span>
+            <span class="pill" onclick="togglePill(this,'gingival')">Average</span>
+            <span class="pill danger" onclick="togglePill(this,'gingival')">Poor</span>
           </div>
-          <div>
-            <label>Erosion / Decalcification</label>
-            <div class="pills" id="erosion">
-              <span class="pill success" onclick="togglePillExpand(this,'erosion','erosionDetails','Yes')">No</span>
-              <span class="pill danger" onclick="togglePillExpand(this,'erosion','erosionDetails','Yes')">Yes</span>
-            </div>
-            <div class="expand-field" id="erosionDetails">
-              <input type="text" id="erosionDetailsInput" placeholder="Details..." oninput="generate()">
-            </div>
+        </div>
+        <div>
+          <label>Caries Evident</label>
+          <div class="pills" id="caries">
+            <span class="pill success" onclick="togglePillExpand(this,'caries','cariesDetails','Yes')">No</span>
+            <span class="pill danger" onclick="togglePillExpand(this,'caries','cariesDetails','Yes')">Yes</span>
+          </div>
+          <div class="expand-field" id="cariesDetails">
+            <input type="text" id="cariesDetailsInput" placeholder="" oninput="generate()">
+          </div>
+        </div>
+        <div>
+          <label>Erosion / Decalcification</label>
+          <div class="pills" id="erosion">
+            <span class="pill success" onclick="togglePillExpand(this,'erosion','erosionDetails','Yes')">No</span>
+            <span class="pill danger" onclick="togglePillExpand(this,'erosion','erosionDetails','Yes')">Yes</span>
+          </div>
+          <div class="expand-field" id="erosionDetails">
+            <input type="text" id="erosionDetailsInput" placeholder="" oninput="generate()">
           </div>
         </div>
         <div>
@@ -434,40 +434,90 @@
             <span class="pill danger" onclick="togglePillExpand(this,'doubtfulProg','doubtfulProgDetails','Yes')">Yes</span>
           </div>
           <div class="expand-field" id="doubtfulProgDetails">
-            <input type="text" id="doubtfulProgDetailsInput" placeholder="Which teeth..." oninput="generate()">
+            <input type="text" id="doubtfulProgDetailsInput" placeholder="" oninput="generate()">
           </div>
         </div>
         <hr class="divider">
-        <div>
-          <label>BEWE Score</label>
-          <table style="border-collapse:collapse;margin-top:6px;width:auto">
+        <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+          <div>
+            <label>BPE Score</label>
+            <table style="border-collapse:collapse;margin-top:6px;width:auto">
+              <tr>
+                <td style="border-right:1px solid #555;border-bottom:1px solid #555;padding:6px 14px;text-align:center">
+                  <input type="number" id="bpe1" min="0" max="4" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+                <td style="border-right:1px solid #555;border-bottom:1px solid #555;padding:6px 14px;text-align:center">
+                  <input type="number" id="bpe2" min="0" max="4" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+                <td style="border-bottom:1px solid #555;padding:6px 14px;text-align:center">
+                  <input type="number" id="bpe3" min="0" max="4" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+              </tr>
+              <tr>
+                <td style="border-right:1px solid #555;padding:6px 14px;text-align:center">
+                  <input type="number" id="bpe4" min="0" max="4" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+                <td style="border-right:1px solid #555;padding:6px 14px;text-align:center">
+                  <input type="number" id="bpe5" min="0" max="4" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+                <td style="padding:6px 14px;text-align:center">
+                  <input type="number" id="bpe6" min="0" max="4" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div>
+            <label>BEWE Score</label>
+            <table style="border-collapse:collapse;margin-top:6px;width:auto">
+              <tr>
+                <td style="border-right:1px solid #555;border-bottom:1px solid #555;padding:6px 14px;text-align:center">
+                  <input type="number" id="bewe1" min="0" max="3" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+                <td style="border-right:1px solid #555;border-bottom:1px solid #555;padding:6px 14px;text-align:center">
+                  <input type="number" id="bewe2" min="0" max="3" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+                <td style="border-bottom:1px solid #555;padding:6px 14px;text-align:center">
+                  <input type="number" id="bewe3" min="0" max="3" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+              </tr>
+              <tr>
+                <td style="border-right:1px solid #555;padding:6px 14px;text-align:center">
+                  <input type="number" id="bewe4" min="0" max="3" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+                <td style="border-right:1px solid #555;padding:6px 14px;text-align:center">
+                  <input type="number" id="bewe5" min="0" max="3" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+                <td style="padding:6px 14px;text-align:center">
+                  <input type="number" id="bewe6" min="0" max="3" placeholder="" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <label>Dentition</label>
+          <table style="border-collapse:collapse;margin-top:6px;table-layout:fixed">
             <tr>
-              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
-                <input type="number" id="bewe1" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+              <td style="border-right:1px solid #555;border-bottom:1px solid #555;padding:4px 6px;width:240px">
+                <input type="text" id="dent1" oninput="generate()" style="width:100%;border:none;outline:none;font-size:13px;font-family:inherit;background:transparent;padding:0;text-align:center">
               </td>
-              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
-                <input type="number" id="bewe2" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
-              </td>
-              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
-                <input type="number" id="bewe3" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+              <td style="border-bottom:1px solid #555;padding:4px 6px;width:240px">
+                <input type="text" id="dent2" oninput="generate()" style="width:100%;border:none;outline:none;font-size:13px;font-family:inherit;background:transparent;padding:0;text-align:center">
               </td>
             </tr>
             <tr>
-              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
-                <input type="number" id="bewe4" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+              <td style="border-right:1px solid #555;padding:4px 6px;width:240px">
+                <input type="text" id="dent3" oninput="generate()" style="width:100%;border:none;outline:none;font-size:13px;font-family:inherit;background:transparent;padding:0;text-align:center">
               </td>
-              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
-                <input type="number" id="bewe5" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
-              </td>
-              <td style="border:1px solid var(--border);padding:6px 14px;text-align:center">
-                <input type="number" id="bewe6" min="0" max="3" placeholder="0" oninput="generate()" style="width:48px;text-align:center;border:none;outline:none;font-size:14px;background:transparent">
+              <td style="padding:4px 6px;width:240px">
+                <input type="text" id="dent4" oninput="generate()" style="width:100%;border:none;outline:none;font-size:13px;font-family:inherit;background:transparent;padding:0;text-align:center">
               </td>
             </tr>
           </table>
-          <div style="margin-top:8px">
-            <label>BEWE Notes</label>
-            <input type="text" id="beweNotes" placeholder="Additional BEWE notes..." oninput="generate()">
-          </div>
+        </div>
+        <div>
+          <label>Notes</label>
+          <textarea id="beweNotes" rows="2" oninput="generate()"></textarea>
         </div>
       </div>
     </div>
@@ -489,7 +539,7 @@
           <div>
             <label>Overjet</label>
             <div class="inline-num">
-              <input type="number" id="overjet" step="0.5" placeholder="0" oninput="generate()">
+              <input type="number" id="overjet" step="0.5" placeholder="" oninput="generate()">
               <span class="unit">mm</span>
             </div>
           </div>
@@ -511,7 +561,7 @@
             </div>
             <div class="expand-field" id="aobDetails">
               <div class="inline-num" style="margin-top:2px">
-                <input type="number" id="aobMm" step="0.5" placeholder="0" oninput="generate()">
+                <input type="number" id="aobMm" step="0.5" placeholder="" oninput="generate()">
                 <span class="unit">mm</span>
               </div>
             </div>
@@ -591,7 +641,7 @@
         <div>
           <label>Contact Point Displacement</label>
           <div class="inline-num">
-            <input type="number" id="cpDisplace" step="0.5" placeholder="0" oninput="generate()">
+            <input type="number" id="cpDisplace" step="0.5" placeholder="" oninput="generate()">
             <span class="unit">mm</span>
           </div>
         </div>
@@ -607,7 +657,7 @@
                   <span class="pill" onclick="togglePill(this,'clUpper')">Shifted L</span>
                 </div>
                 <div class="inline-num" style="margin-top:6px">
-                  <input type="number" id="clUpperAmt" step="0.5" placeholder="0" oninput="generate()">
+                  <input type="number" id="clUpperAmt" step="0.5" placeholder="" oninput="generate()">
                   <span class="unit">mm</span>
                 </div>
               </div>
@@ -619,33 +669,31 @@
                   <span class="pill" onclick="togglePill(this,'clLower')">Shifted L</span>
                 </div>
                 <div class="inline-num" style="margin-top:6px">
-                  <input type="number" id="clLowerAmt" step="0.5" placeholder="0" oninput="generate()">
+                  <input type="number" id="clLowerAmt" step="0.5" placeholder="" oninput="generate()">
                   <span class="unit">mm</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="row">
-          <div>
-            <label>Crossbites</label>
-            <div class="pills" id="crossbites">
-              <span class="pill success" onclick="togglePillExpand(this,'crossbites','crossbitesDetails','Present')">None</span>
-              <span class="pill danger" onclick="togglePillExpand(this,'crossbites','crossbitesDetails','Present')">Present</span>
-            </div>
-            <div class="expand-field" id="crossbitesDetails">
-              <input type="text" id="crossbitesDetailsInput" placeholder="Anterior / Posterior / Upper / Lower..." oninput="generate()">
-            </div>
+        <div>
+          <label>Crossbites</label>
+          <div class="pills" id="crossbites">
+            <span class="pill success" onclick="togglePillExpand(this,'crossbites','crossbitesDetails','Present')">None</span>
+            <span class="pill danger" onclick="togglePillExpand(this,'crossbites','crossbitesDetails','Present')">Present</span>
           </div>
-          <div>
-            <label>Scissorbites</label>
-            <div class="pills" id="scissorbites">
-              <span class="pill success" onclick="togglePillExpand(this,'scissorbites','scissorbitesDetails','Present')">None</span>
-              <span class="pill danger" onclick="togglePillExpand(this,'scissorbites','scissorbitesDetails','Present')">Present</span>
-            </div>
-            <div class="expand-field" id="scissorbitesDetails">
-              <input type="text" id="scissorbitesDetailsInput" placeholder="Details..." oninput="generate()">
-            </div>
+          <div class="expand-field" id="crossbitesDetails">
+            <input type="text" id="crossbitesDetailsInput" placeholder="" oninput="generate()">
+          </div>
+        </div>
+        <div>
+          <label>Scissorbites</label>
+          <div class="pills" id="scissorbites">
+            <span class="pill success" onclick="togglePillExpand(this,'scissorbites','scissorbitesDetails','Present')">None</span>
+            <span class="pill danger" onclick="togglePillExpand(this,'scissorbites','scissorbitesDetails','Present')">Present</span>
+          </div>
+          <div class="expand-field" id="scissorbitesDetails">
+            <input type="text" id="scissorbitesDetailsInput" placeholder="" oninput="generate()">
           </div>
         </div>
         <div>
@@ -658,7 +706,7 @@
             <span class="pill danger" onclick="mandDispSelect(this,'left')">Left</span>
           </div>
           <div class="expand-field" id="mandDisplaceDetails" style="margin-top:8px">
-            <input type="text" id="mandDisplaceDetailsInput" placeholder="Details of displacement..." oninput="generate()">
+            <input type="text" id="mandDisplaceDetailsInput" placeholder="" oninput="generate()">
           </div>
         </div>
       </div>
@@ -681,7 +729,7 @@
         </div>
         <div>
           <label>Extractions</label>
-          <input type="text" id="extractions" placeholder="e.g. UL4, UR4, LL4, LR4..." oninput="generate()">
+          <input type="text" id="extractions" placeholder="" oninput="generate()">
         </div>
       </div>
     </div>
@@ -729,10 +777,6 @@
             </div>
           </div>
         </div>
-        <div>
-          <label>Other Notes</label>
-          <textarea id="otherNotes" rows="3" placeholder="Any additional notes..." oninput="generate()"></textarea>
-        </div>
       </div>
     </div>
 
@@ -753,7 +797,7 @@
           </div>
           <div>
             <label>DHC Qualifier</label>
-            <input type="text" id="dhcQualifier" placeholder="e.g. a, d, h..." oninput="generate()">
+            <input type="text" id="dhcQualifier" placeholder="" oninput="generate()">
           </div>
           <div>
             <label>AC Grade (1–10)</label>
@@ -774,6 +818,14 @@
       </div>
     </div>
 
+    <!-- 9. Other Notes -->
+    <div class="card">
+      <div class="card-header"><span class="sec-num">9</span>Other Notes</div>
+      <div class="card-body">
+        <textarea id="otherNotes" rows="5" placeholder="" oninput="generate()"></textarea>
+      </div>
+    </div>
+
   </div><!-- /form-col -->
 
   <!-- OUTPUT -->
@@ -784,11 +836,13 @@
         <div>
           <button class="copy-btn" onclick="copyOutput()" id="copyBtn">Copy</button>
           <button class="export-btn" onclick="exportPDF()">Export PDF</button>
+          <button class="export-btn" onclick="savePage()">Save</button>
         </div>
       </div>
       <pre id="output-text">Fill in the form to generate clinical notes...</pre>
+      <button class="output-toggle" id="outputToggle" onclick="toggleOutput()">▼ Show more</button>
     </div>
-    <button class="clear-btn" onclick="clearAll()">🗑 Clear all fields</button>
+
   </div>
 
 </div>
@@ -864,6 +918,22 @@ function val(id) { const el = document.getElementById(id); return el ? el.value.
 function line(label, value) { if (!value) return ''; return `${label}: ${value}\n`; }
 function section(title) { const bar = '─'.repeat(50); return `\n${bar}\n  ${title}\n${bar}\n`; }
 
+function savePage() {
+  window.document.execCommand('SaveAs');
+  if (!document.execCommand('SaveAs')) {
+    // Fallback: trigger Ctrl+S
+    const e = new KeyboardEvent('keydown', { key: 's', ctrlKey: true, bubbles: true });
+    document.dispatchEvent(e);
+  }
+}
+
+function toggleOutput() {
+  const el = document.getElementById('output-text');
+  const btn = document.getElementById('outputToggle');
+  const expanded = el.classList.toggle('expanded');
+  btn.textContent = expanded ? '▲ Show less' : '▼ Show more';
+}
+
 function generate() {
   let out = '';
   out += `NHS ORTHODONTIC CASE ASSESSMENT\n`;
@@ -907,7 +977,7 @@ function generate() {
     if (skelClass||skelSev) out += `Skeletal classification: ${skelClass||''}${skelSev?' – '+skelSev:''}\n`;
     out += line('FM angle / Face height', fmAngle);
     out += line('Facial profile', facProfile);
-    out += line('NLA', nla);
+    out += line('Nasiolabial angle', nla);
     if (transverse) out += `Transverse asymmetry: ${transverse}${transverse==='Yes'&&transverseD?' – '+transverseD:''}\n`;
     out += line('Lips', lips);
     if (tmj === 'No') out += `TMJ: NAD\n`;
@@ -918,22 +988,33 @@ function generate() {
   const oh = getPill('oralHygiene'), ging = getPill('gingival');
   const caries = getPill('caries'), cariesD = val('cariesDetailsInput');
   const erosion = getPill('erosion'), erosionD = val('erosionDetailsInput');
+  const bpe = [val('bpe1'),val('bpe2'),val('bpe3'),val('bpe4'),val('bpe5'),val('bpe6')];
+  const bpeAny = bpe.some(v=>v!=='');
   const bewe = [val('bewe1'),val('bewe2'),val('bewe3'),val('bewe4'),val('bewe5'),val('bewe6')];
   const beweTotal = bewe.filter(v=>v!=='').reduce((a,b)=>a+Number(b),0);
   const beweAny = bewe.some(v=>v!=='');
   const beweNotes = val('beweNotes');
-  if (oh||ging||caries||erosion||doubtful||beweAny||beweNotes) {
+  const dentAny = val('dent1')||val('dent2')||val('dent3')||val('dent4');
+  if (oh||ging||caries||erosion||doubtful||bpeAny||beweAny||beweNotes||dentAny) {
     out += section('INTRA-ORAL EXAMINATION');
     out += line('Oral hygiene', oh);
     out += line('Gingival condition', ging);
     if (caries) out += `Caries: ${caries}${caries==='Yes'&&cariesD?' – '+cariesD:''}\n`;
     if (erosion) out += `Erosion/decalcification: ${erosion}${erosion==='Yes'&&erosionD?' – '+erosionD:''}\n`;
     if (doubtful) out += `Teeth of doubtful prognosis: ${doubtful}${doubtful==='Yes'&&doubtfulD?' – '+doubtfulD:''}\n`;
+    if (bpeAny) {
+      const b = bpe.map(s => s||'0');
+      out += `BPE:\n${b[0]}  ${b[1]}  ${b[2]}\n${b[3]}  ${b[4]}  ${b[5]}\n`;
+    }
     if (beweAny) {
       const v = bewe.map(s => s||'0');
       out += `BEWE:\n${v[0]}  ${v[1]}  ${v[2]}\n${v[3]}  ${v[4]}  ${v[5]}\n`;
     }
-    if (beweNotes) out += `BEWE notes: ${beweNotes}\n`;
+    if (beweNotes) out += `Notes: ${beweNotes}\n`;
+    if (dentAny) {
+      const d = [val('dent1'),val('dent2'),val('dent3'),val('dent4')].map(s=>s||'');
+      out += `Dentition:\n${d[0].padEnd(10).substring(0,10)} | ${d[1].padEnd(10).substring(0,10)}\n${d[2].padEnd(10).substring(0,10)} | ${d[3].padEnd(10).substring(0,10)}\n`;
+    }
   }
 
   // Occlusion
@@ -982,14 +1063,12 @@ function generate() {
   // Appliances & Retention
   const appU = getPillsMulti('applianceUpper'), appL = getPillsMulti('applianceLower');
   const retU = getPillsMulti('retentionUpper'), retL = getPillsMulti('retentionLower');
-  const notes = val('otherNotes');
-  if (appU||appL||retU||retL||notes) {
+  if (appU||appL||retU||retL) {
     out += section('APPLIANCES & RETENTION');
     if (appU) out += `Appliances – Upper: ${appU}\n`;
     if (appL) out += `Appliances – Lower: ${appL}\n`;
     if (retU) out += `Retention – Upper: ${retU}\n`;
     if (retL) out += `Retention – Lower: ${retL}\n`;
-    if (notes) out += `\nOther notes:\n${notes}\n`;
   }
 
   // IOTN
@@ -1000,10 +1079,19 @@ function generate() {
     out += line('AC grade', acGrade);
   }
 
+  // Other Notes
+  const notes = val('otherNotes');
+  if (notes) {
+    out += section('OTHER NOTES');
+    out += `${notes}\n`;
+  }
+
   if (!out.trim() || out.trim() === 'NHS ORTHODONTIC CASE ASSESSMENT') {
     out = 'Fill in the form to generate clinical notes...';
   }
   document.getElementById('output-text').textContent = out;
+  document.getElementById('output-text').classList.remove('expanded');
+  document.getElementById('outputToggle').textContent = '▼ Show more';
 }
 
 function exportPDF() {
